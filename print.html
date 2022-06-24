@@ -173,7 +173,7 @@
 <blockquote>
 <p><strong>Note:</strong> This includes <a href="https://github.com/u-boot/u-boot"><code>U-boot</code></a>, the de-facto standard in the embedded-systems world. <a href="https://github.com/nccgroup/depthcharge"><code>DepthCharge</code></a> is an example of a U-Boot hacking toolkit for security researchers and tinkerers, designed to exploit U-boot's large attack surface. </p>
 </blockquote>
-<p><img src="https://raw.githubusercontent.com/imrank03/rustBoot-book-diagrams/main/Mental_map.svg?raw=true" alt="mental_map_uboot_attack_surface" /></p>
+<p><a href="https://raw.githubusercontent.com/imrank03/rustBoot-book-diagrams/main/Mental_map.svg?raw=true"><img src="https://raw.githubusercontent.com/imrank03/rustBoot-book-diagrams/main/Mental_map.svg?raw=true" alt="mental_map_uboot_attack_surface" title="Mental map of U-boot attack surface" /></a></p>
 <h3 id="memory-safety"><a class="header" href="#memory-safety">Memory safety:</a></h3>
 <p>A large TCB inevitably equates to a large attack surface. The vast majority of them are written in C or some combination of C and Assembly. <code>A quick analysis of CVEs</code> reported over the last 2 years (in u-boot, bare-box and other open-source ones) show that the bulk of them fall into the memory-safety category. </p>
 <blockquote>
@@ -881,7 +881,7 @@ pub const UPDATE_PARTITION_ADDRESS: usize = 0x58000;
 <ul>
 <li><strong><code>RUSTBOOT partition:</code></strong> contains the bootloader (its code and data) and a (test) public-key embedded as part of the bootloader image, starts at address <code>0x0</code>.</li>
 <li><strong><code>BOOT partition:</code></strong> contains boot firmware, starts at address <code>PARTITION_BOOT_ADDRESS</code>.</li>
-<li><strong><code>UPDATE partition:</code></strong> contains update firmware, starts at address <code>UPDATE_PARTITION_ADDRESS</code>. The boot firmware is responsible for downloading and installed the update firmware into this partition via a secure channel.</li>
+<li><strong><code>UPDATE partition:</code></strong> contains update firmware, starts at address <code>UPDATE_PARTITION_ADDRESS</code>. The boot firmware is responsible for downloading and installing the update firmware into this partition via a secure channel.</li>
 <li><strong><code>SWAP partition:</code></strong> is the temporary swap space, starts at address <code>SWAP_PARTITION_ADDRESS</code>. </li>
 </ul>
 <h2 id="compiling-signing-and-programming"><a class="header" href="#compiling-signing-and-programming">Compiling, Signing and Programming:</a></h2>
@@ -1330,7 +1330,7 @@ Depending on your host operating system, the device name might differ. For examp
 </ul>
 <p>Your serial console should now start <a href="https://github.com/nihalpasham/rustBoot/blob/main/boards/bootloaders/rpi4/debug.md">receiving boot-logs from the rpi4</a></p>
 <div style="break-before: page; page-break-before: always;"></div><h1 id="stm32h723"><a class="header" href="#stm32h723"><code>stm32h723</code></a></h1>
-<p>The <code>stm32h723</code> example uses a <a href="https://www.st.com/en/evaluation-tools/nucleo-h723zg.html">Nucleo-h723zg board</a>. It has a custom led configuration. </p>
+<p>The <code>stm32h723</code> example uses a <a href="https://www.st.com/en/evaluation-tools/nucleo-h723zg.html">Nucleo-h723zg board</a>. The board has three <code>LEDs</code> of which two <code>LEDs</code> are used in this example.</p>
 <blockquote>
 <p>Note:</p>
 <ul>
@@ -1341,18 +1341,16 @@ Depending on your host operating system, the device name might differ. For examp
 <h2 id="partitioning-1"><a class="header" href="#partitioning-1">Partitioning:</a></h2>
 <p>The first step in integrating rustBoot is <code>flash-memory partitioning</code> i.e. we divide the <code>stm32h723</code>'s flash-memory into 4 partitions, taking into account the geometry of the flash memory.</p>
 <blockquote>
-<p>Note:</p>
+<p><strong>Note</strong>:</p>
 <ul>
-<li><strong>STM32H7</strong>: Due to ECC functionality, it is not possible to write partition status/sector flags more than once. Please use a bigger PARTITION_SIZE.</li>
+<li><a href="https://www.st.com/resource/en/application_note/an5342-error-correction-code-ecc-management-for-internal-memories-protection-on-stm32h7-series-stmicroelectronics.pdf">Error correction code</a> memory is a type of flash memory data storage that uses error correction code to detect and correct n-bit data corruption that occurs in memory.</li>
+<li>Since the <strong>STM32H7</strong> series devices have a 10-bit <code>ECC</code> function, it is not possible to write partition status/sector flags more than once, so use a bigger <code>PARTITION_SIZE</code>. The last <code>128KB</code> sector in each partition will be reserved for bootloader flags or partition status.</li>
 </ul>
 </blockquote>
 <blockquote>
 <p>You can read more about <code>mcu</code> partitoning <a href="usage/../arch/partitions.html#micro-controller-partitions">here</a></p>
 </blockquote>
 <p>In this example, we'll be using the following partitioning scheme. You can locate these constants in the <a href="https://github.com/nihalpasham/rustBoot/blob/main/rustBoot/src/constants.rs">constants module</a></p>
-<blockquote>
-<p>Since the last 128KB on each partition will be reserved for bootloader flags or partition status.</p>
-</blockquote>
 <pre><pre class="playground"><code class="language-rust">
 <span class="boring">#![allow(unused)]
 </span>
@@ -1372,7 +1370,7 @@ pub const UPDATE_PARTITION_ADDRESS: usize = 0x08060000;
 <ul>
 <li><strong><code>RUSTBOOT partition:</code></strong> contains the bootloader (its code and data) and a (test) public-key embedded as part of the bootloader image, starts at address <code>0x0</code>.</li>
 <li><strong><code>BOOT partition:</code></strong> contains boot firmware, starts at address <code>PARTITION_BOOT_ADDRESS</code>.</li>
-<li><strong><code>UPDATE partition:</code></strong> contains update firmware, starts at address <code>UPDATE_PARTITION_ADDRESS</code>. The boot firmware is responsible for downloading and installed the update firmware into this partition via a secure channel.</li>
+<li><strong><code>UPDATE partition:</code></strong> contains update firmware, starts at address <code>UPDATE_PARTITION_ADDRESS</code>. The boot firmware is responsible for downloading and installing the update firmware into this partition via a secure channel.</li>
 <li><strong><code>SWAP partition:</code></strong> is the temporary swap space, starts at address <code>SWAP_PARTITION_ADDRESS</code>. </li>
 </ul>
 <h2 id="compiling-signing-and-programming-1"><a class="header" href="#compiling-signing-and-programming-1">Compiling, Signing and Programming:</a></h2>
@@ -1498,8 +1496,13 @@ Finished in 5.773s
 <p>Here is a list of the contributors who have helped improve <code>rustBoot</code>. Big shout-out to them!</p>
 <blockquote>
 <ol>
-<li><a href="https://github.com/imrank03" title="@imrank03"><strong><code>Imran K</code></strong> <img height="13" width="15" src="https://unpkg.com/simple-icons@v7/icons/github.svg" />
+<li><a href="https://github.com/imrank03" title="@imrank03"><strong><code>Imran K</code></strong> <img height="13" width="12" src="https://unpkg.com/simple-icons@v7/icons/github.svg" />
 </a></li>
+</ol>
+</blockquote>
+<blockquote>
+<ol start="2">
+<li><a href="https://github.com/yashwanthsinghm" title="yashwanthsinghm"><strong><code>Yashwanth Singh M</code></strong> <img src="https://img.icons8.com/ios-glyphs/20/11/github.png"/></a></li>
 </ol>
 </blockquote>
 <p>If you feel you're missing from this list, feel free to add yourself in a PR.</p>

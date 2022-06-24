@@ -146,7 +146,7 @@
                 <div id="content" class="content">
                     <main>
                         <h1 id="stm32h723"><a class="header" href="#stm32h723"><code>stm32h723</code></a></h1>
-<p>The <code>stm32h723</code> example uses a <a href="https://www.st.com/en/evaluation-tools/nucleo-h723zg.html">Nucleo-h723zg board</a>. It has a custom led configuration. </p>
+<p>The <code>stm32h723</code> example uses a <a href="https://www.st.com/en/evaluation-tools/nucleo-h723zg.html">Nucleo-h723zg board</a>. The board has three <code>LEDs</code> of which two <code>LEDs</code> are used in this example.</p>
 <blockquote>
 <p>Note:</p>
 <ul>
@@ -157,18 +157,16 @@
 <h2 id="partitioning"><a class="header" href="#partitioning">Partitioning:</a></h2>
 <p>The first step in integrating rustBoot is <code>flash-memory partitioning</code> i.e. we divide the <code>stm32h723</code>'s flash-memory into 4 partitions, taking into account the geometry of the flash memory.</p>
 <blockquote>
-<p>Note:</p>
+<p><strong>Note</strong>:</p>
 <ul>
-<li><strong>STM32H7</strong>: Due to ECC functionality, it is not possible to write partition status/sector flags more than once. Please use a bigger PARTITION_SIZE.</li>
+<li><a href="https://www.st.com/resource/en/application_note/an5342-error-correction-code-ecc-management-for-internal-memories-protection-on-stm32h7-series-stmicroelectronics.pdf">Error correction code</a> memory is a type of flash memory data storage that uses error correction code to detect and correct n-bit data corruption that occurs in memory.</li>
+<li>Since the <strong>STM32H7</strong> series devices have a 10-bit <code>ECC</code> function, it is not possible to write partition status/sector flags more than once, so use a bigger <code>PARTITION_SIZE</code>. The last <code>128KB</code> sector in each partition will be reserved for bootloader flags or partition status.</li>
 </ul>
 </blockquote>
 <blockquote>
 <p>You can read more about <code>mcu</code> partitoning <a href="../arch/partitions.html#micro-controller-partitions">here</a></p>
 </blockquote>
 <p>In this example, we'll be using the following partitioning scheme. You can locate these constants in the <a href="https://github.com/nihalpasham/rustBoot/blob/main/rustBoot/src/constants.rs">constants module</a></p>
-<blockquote>
-<p>Since the last 128KB on each partition will be reserved for bootloader flags or partition status.</p>
-</blockquote>
 <pre><pre class="playground"><code class="language-rust">
 <span class="boring">#![allow(unused)]
 </span>
@@ -188,7 +186,7 @@ pub const UPDATE_PARTITION_ADDRESS: usize = 0x08060000;
 <ul>
 <li><strong><code>RUSTBOOT partition:</code></strong> contains the bootloader (its code and data) and a (test) public-key embedded as part of the bootloader image, starts at address <code>0x0</code>.</li>
 <li><strong><code>BOOT partition:</code></strong> contains boot firmware, starts at address <code>PARTITION_BOOT_ADDRESS</code>.</li>
-<li><strong><code>UPDATE partition:</code></strong> contains update firmware, starts at address <code>UPDATE_PARTITION_ADDRESS</code>. The boot firmware is responsible for downloading and installed the update firmware into this partition via a secure channel.</li>
+<li><strong><code>UPDATE partition:</code></strong> contains update firmware, starts at address <code>UPDATE_PARTITION_ADDRESS</code>. The boot firmware is responsible for downloading and installing the update firmware into this partition via a secure channel.</li>
 <li><strong><code>SWAP partition:</code></strong> is the temporary swap space, starts at address <code>SWAP_PARTITION_ADDRESS</code>. </li>
 </ul>
 <h2 id="compiling-signing-and-programming"><a class="header" href="#compiling-signing-and-programming">Compiling, Signing and Programming:</a></h2>
