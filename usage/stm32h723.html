@@ -157,7 +157,7 @@
 <h2 id="partitioning"><a class="header" href="#partitioning">Partitioning:</a></h2>
 <p>The first step in integrating rustBoot is <code>flash-memory partitioning</code> i.e. we divide the <code>stm32h723</code>'s flash-memory into 4 partitions, taking into account the geometry of the flash memory.</p>
 <blockquote>
-<p><strong>Note</strong>:</p>
+<p>Note:</p>
 <ul>
 <li><a href="https://www.st.com/resource/en/application_note/an5342-error-correction-code-ecc-management-for-internal-memories-protection-on-stm32h7-series-stmicroelectronics.pdf">Error correction code</a> memory is a type of flash memory data storage that uses error correction code to detect and correct n-bit data corruption that occurs in memory.</li>
 <li>Since the <strong>STM32H7</strong> series devices have a 10-bit <code>ECC</code> function, it is not possible to write partition status/sector flags more than once, so use a bigger <code>PARTITION_SIZE</code>. The last <code>128KB</code> sector in each partition will be reserved for bootloader flags or partition status.</li>
