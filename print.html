@@ -1634,9 +1634,21 @@ pub const UPDATE_PARTITION_ADDRESS: usize = 0x08060000;
 <li>boot and update firmware</li>
 </ul>
 <p>sign both pieces of firmware with a (test) <a href="https://github.com/nihalpasham/rustBoot/tree/main/boards/rbSigner/keygen">private-key</a> and finally create valid <a href="usage/../arch/images.html#mcu-image-format"><code>rustBoot mcu-images</code></a> i.e. signed boot and update firmware images.</p>
+<blockquote>
+<p>Note:</p>
+<ul>
+<li><code>ecc256.der</code> contains a public-key and a private-key, the first 32 bytes being the public-key and the rest being the private-key, used to sign the firmware. We are using it for testing purposes only.</li>
+</ul>
+</blockquote>
 <p>Compiling, signing and programming can be performed via a single command</p>
-<pre><code class="language-Terminal">cargo stm32h723 build-sign-flash 1234 1235 rustBoot
+<pre><code class="language-Terminal">cargo stm32h723 build-sign-flash rustBoot [boot-ver] [updt-ver]
 </code></pre>
+<blockquote>
+<p>Note:</p>
+<ul>
+<li>The <code>updt-ver</code> number should be greater than <code>boot-ver</code>.</li>
+</ul>
+</blockquote>
 <p>This will build, sign and flash all 3 packages (i.e. bootloader + boot-fw + update-fw) onto the board.</p>
 <blockquote>
 <p>Note: </p>
@@ -1647,9 +1659,9 @@ pub const UPDATE_PARTITION_ADDRESS: usize = 0x08060000;
 </ul>
 </blockquote>
 <p>Here's the command line output that should be produced.</p>
-<pre><code class="language-Terminal">$ cargo stm32h723 build-sign-flash 1234 1235 rustBoot
+<pre><code class="language-Terminal">$ cargo stm32h723 build-sign-flash rustBoot 1234 1235
     Finished dev [unoptimized + debuginfo] target(s) in 0.10s
-     Running `target/debug/xtask stm32h723 build-sign-flash 1234 1235 rustBoot`
+     Running `target/debug/xtask stm32h723 build-sign-flash rustBoot 1234 1235`
 $ cargo build --release
    Compiling version_check v0.9.4
    Compiling typenum v1.15.0
